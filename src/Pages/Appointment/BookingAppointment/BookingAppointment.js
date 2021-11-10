@@ -2,18 +2,22 @@ import { Button, Grid, Paper, Typography } from '@mui/material';
 import React from 'react';
 import BookingModal from '../BookingModal/BookingModal';
 
-const BookingAppointment = ({ booking, date }) => {
+const BookingAppointment = ({ booking, date, setIsAppointmentCreated }) => {
   const { name, time, space } = booking;
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const [openModal, setOpenModal] = React.useState(false);
+  const handleOpenModal = () => {
+    setOpenModal(true);
+    setIsAppointmentCreated(false);
+  };
+  const handleCloseModal = () => setOpenModal(false);
   return (
     <>
       <BookingModal
-        open={open}
-        handleClose={handleClose}
+        openModal={openModal}
+        handleCloseModal={handleCloseModal}
         booking={booking}
         date={date}
+        setIsAppointmentCreated={setIsAppointmentCreated}
       ></BookingModal>
       <Grid item xs={12} sm={6} md={4}>
         <Paper elevation={2} sx={{ py: 5 }}>
@@ -34,7 +38,7 @@ const BookingAppointment = ({ booking, date }) => {
             {space} SPACES AVAILABLE
           </Typography>
           <Button
-            onClick={handleOpen}
+            onClick={handleOpenModal}
             variant="contained"
             style={{
               padding: '7px 20px',

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Container, Grid, Typography } from '@mui/material';
+import React, { useState } from 'react';
+import { Alert, Container, Grid, Typography } from '@mui/material';
 import BookingAppointment from '../BookingAppointment/BookingAppointment';
 
 const bookings = [
@@ -17,31 +17,32 @@ const bookings = [
   },
   {
     id: 3,
-    name: 'Cosmetic Dentistry',
-    time: '09.00 AM - 10.00 AM',
+    name: 'Teeth Cleaning',
+    time: '05.00 PM - 7.00 PM',
     space: 8,
   },
   {
     id: 4,
-    name: 'Cosmetic Dentistry',
+    name: 'Cavity Protection',
     time: '09.00 AM - 10.00 AM',
     space: 8,
   },
   {
     id: 5,
-    name: 'Cosmetic Dentistry',
-    time: '09.00 AM - 10.00 AM',
+    name: 'Oral Dentistry',
+    time: '09.00 AM - 03.00 PM',
     space: 8,
   },
   {
     id: 6,
-    name: 'Cosmetic Dentistry',
-    time: '09.00 AM - 10.00 AM',
+    name: 'Cavity Dentistry',
+    time: '05.00 PM - 10.00 PM',
     space: 8,
   },
 ];
 
 const AvailableAppointment = ({ date }) => {
+  const [isAppointmentCreated, setIsAppointmentCreated] = useState(false);
   return (
     <div>
       <Typography
@@ -55,6 +56,12 @@ const AvailableAppointment = ({ date }) => {
         Available Appointments on {date?.toDateString()}
       </Typography>
 
+      {isAppointmentCreated && (
+        <Alert severity="success" sx={{ mb: 8, float: 'center' }}>
+          Appointment Created Successfully!
+        </Alert>
+      )}
+
       <Container>
         <Grid container rowSpacing={8} columnSpacing={4}>
           {bookings.map(booking => (
@@ -62,6 +69,7 @@ const AvailableAppointment = ({ date }) => {
               key={booking.id}
               booking={booking}
               date={date}
+              setIsAppointmentCreated={setIsAppointmentCreated}
             />
           ))}
         </Grid>

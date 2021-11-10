@@ -16,13 +16,15 @@ import Navigation from '../../Shared/Navigation/Navigation';
 
 const Login = () => {
   const [loginData, setLoginData] = useState({});
-  const { signInUser, isLoading, authError } = useAuth();
+  const { signInUser, signInWithGoogle, isLoading, authError, setAuthError } =
+    useAuth();
   const location = useLocation();
   const history = useHistory();
   const { email, password } = loginData;
 
   const handleLoginForm = e => {
     e.preventDefault();
+    setAuthError('');
     signInUser(email, password, location, history);
   };
 
@@ -34,6 +36,12 @@ const Login = () => {
     newLoginData[field] = value;
     setLoginData(newLoginData);
     // console.log(loginData);
+  };
+
+  const handleGoogleSignIn = () => {
+    setAuthError('');
+
+    signInWithGoogle(location, history);
   };
 
   return (
@@ -61,7 +69,7 @@ const Login = () => {
                     variant="standard"
                     name="email"
                     type="email"
-                    onChange={handleOnChange}
+                    onBlur={handleOnChange}
                   />
                   <TextField
                     sx={{ width: '60%', mb: 10 }}
@@ -70,7 +78,7 @@ const Login = () => {
                     variant="standard"
                     name="password"
                     type="password"
-                    onChange={handleOnChange}
+                    onBlur={handleOnChange}
                   />
 
                   <Button
@@ -88,13 +96,28 @@ const Login = () => {
                 </form>
 
                 <NavLink to="/register">
-                  <Button variant="text">New User? Please Register</Button>
+                  <Button sx={{ mt: 3 }} variant="text">
+                    New User? Please Register
+                  </Button>
                 </NavLink>
               </>
             )}
             {isLoading && <CircularProgress sx={{ mt: 7 }} />}
+            {!isLoading && (
+              <>
+                <p>----------------</p>
+                <Button onClick={handleGoogleSignIn} variant="contained">
+                  Google Sign In
+                </Button>
+              </>
+            )}
+
             {/* {isLoading && <LinearProgress sx={{ mt: 7 }} />} */}
-            {authError && <Alert severity="error">{authError}</Alert>}
+            {authError && (
+              <Alert sx={{ mt: 5 }} severity="error">
+                {authError}
+              </Alert>
+            )}
           </Container>
         </Grid>
 

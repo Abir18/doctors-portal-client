@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
@@ -6,6 +6,8 @@ import Fade from '@mui/material/Fade';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import { Button, Container } from '@mui/material';
+import useAuth from '../../../hooks/useAuth';
+import axios from 'axios';
 
 const style = {
   position: 'absolute',
@@ -20,27 +22,85 @@ const style = {
   p: 4,
 };
 
-const BookingModal = ({ open, handleClose, booking, date }) => {
+const BookingModal = ({
+  openModal,
+  handleCloseModal,
+  booking,
+  date,
+  setIsAppointmentCreated,
+}) => {
+  const { user } = useAuth();
+  const defaultBookingInfo = {
+    name: user.displayName,
+    email: user.email,
+  };
+  const [bookingInfo, setBookingInfo] = useState(defaultBookingInfo);
   const { name, time, space } = booking;
+
+  const handleOnBlur = e => {
+    const field = e.target.name;
+    const value = e.target.value;
+    const newBookingInfo = { ...bookingInfo };
+    newBookingInfo[field] = value;
+    // console.log(newBookingInfo);
+    setBookingInfo(newBookingInfo);
+  };
+
   const handleModalForm = e => {
     e.preventDefault();
-    alert('Form Submitted');
-    handleClose();
+
+    const appointment = {
+      ...bookingInfo,
+      bookingName: name,
+      date: date.toLocaleDateString(),
+    };
+
+    axios
+      .post('http://localhost:5000/appointments', appointment)
+      .then(response => {
+        console.log(response);
+        const { data } = response;
+        if (data.insertedId) {
+          handleCloseModal();
+          setIsAppointmentCreated(true);
+          // alert('New Appointment Created');
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+    // fetch('http://localhost:5000/appointments', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify(appointment),
+    // });
+    // .then(res => res.json())
+    // .then(data => console.log(data))
+    // .catch(function (error) {
+    //   console.log(error);
+    // });
+
+    // console.log(appointment, 'apo');
+
+    // alert('Form Submitted');
   };
   return (
     <>
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
-        open={open}
-        onClose={handleClose}
+        open={openModal}
+        onClose={handleCloseModal}
         closeAfterTransition
         BackdropComponent={Backdrop}
         BackdropProps={{
           timeout: 500,
         }}
       >
-        <Fade in={open}>
+        <Fade in={openModal}>
           <Box sx={style}>
             <Typography
               id="transition-modal-title"
@@ -60,31 +120,45 @@ const BookingModal = ({ open, handleClose, booking, date }) => {
                 <TextField
                   fullWidth
                   id="fullWidth"
-                  value={time}
                   disabled
+                  value={time}
                   sx={{ mb: 3 }}
                 />
                 <TextField
                   fullWidth
                   label="Name"
+                  name="name"
+                  defaultValue={user.displayName}
+                  onBlur={handleOnBlur}
+                  required
                   id="fullWidth"
                   sx={{ mb: 3 }}
                 />
                 <TextField
                   fullWidth
                   label="Email"
+                  name="email"
+                  type="email"
+                  defaultValue={user.email}
+                  onBlur={handleOnBlur}
+                  required
                   id="fullWidth"
                   sx={{ mb: 3 }}
                 />
                 <TextField
                   fullWidth
                   label="Phone Number"
-                  type="number"
+                  name="phone"
+                  // defaultValue="Phone Number"
+                  onBlur={handleOnBlur}
+                  required
+                  // type="number"
                   id="fullWidth"
                   sx={{ mb: 3 }}
                 />
                 <TextField
                   fullWidth
+                  disabled
                   value={date?.toDateString()}
                   id="fullWidth"
                   sx={{ mb: 3 }}

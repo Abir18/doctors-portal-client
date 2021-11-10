@@ -8,11 +8,8 @@ const PrivateRoute = ({ children, ...rest }) => {
   if (isLoading) {
     return (
       <>
-        <CircularProgress color="success" sx={{ mt: 3 }} />
-        <LinearProgress
-          color="success"
-          sx={{ width: '60%', margin: '20px auto' }}
-        />
+        {/* <CircularProgress color="success" sx={{ mt: 3 }} /> */}
+        <LinearProgress color="secondary" sx={{ margin: '20px auto' }} />
       </>
     );
   }

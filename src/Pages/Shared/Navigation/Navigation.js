@@ -11,7 +11,7 @@ import useAuth from '../../../hooks/useAuth';
 
 const Navigation = () => {
   const { user, logOutUser } = useAuth();
-  // console.log(user, 'user');
+  console.log(user, 'user');
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -37,7 +37,10 @@ const Navigation = () => {
           </Link>
           {user?.email ? (
             <>
-              <h4>{user.email}</h4>
+              <span style={{ margin: '0 10px' }}>
+                Name: {user.displayName}{' '}
+              </span>
+              <span> {user.email}</span>
               <Button onClick={logOutUser} color="inherit">
                 Logout
               </Button>

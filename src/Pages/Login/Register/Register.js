@@ -8,26 +8,28 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useHistory } from 'react-router-dom';
 import login from '../../../images/login.png';
 import useAuth from '../../../hooks/useAuth';
+import Navigation from '../../Shared/Navigation/Navigation';
 
 const Register = () => {
   const [loginData, setLoginData] = useState({});
+  const history = useHistory();
   const { user, isLoading, registerUser, authError } = useAuth();
 
-  // const { email, password } = loginData;
+  const { name, email, password, password2 } = loginData;
 
   const handleLoginForm = e => {
     e.preventDefault();
-    if (loginData.password !== loginData.password2) {
+    if (password !== password2) {
       alert('Password did not matched');
       return;
     }
-    registerUser(loginData.email, loginData.password);
+    registerUser(name, email, password, history);
   };
 
-  const handleOnChange = e => {
+  const handleOnBlur = e => {
     const field = e.target.name;
     const value = e.target.value;
     // console.log(field, value);
@@ -39,14 +41,15 @@ const Register = () => {
 
   return (
     <>
-      <Link to="/">
+      {/* <Link to="/">
         <Button color="inherit">Home</Button>
       </Link>
       <Link to="/appointment">
         <Button color="inherit">Appointment</Button>
-      </Link>
+      </Link> */}
+      <Navigation></Navigation>
       <Grid container spacing={2}>
-        <Grid item xs={12} md={6} sx={{ mt: 24 }}>
+        <Grid item xs={12} md={6} sx={{ mt: 12 }}>
           <Typography variant="h2" gutterBottom sx={{ fontSize: '30px' }}>
             Register
           </Typography>
@@ -57,11 +60,19 @@ const Register = () => {
                   <TextField
                     sx={{ width: '60%', my: 7 }}
                     id="standard-basic"
+                    label="Your Name"
+                    variant="standard"
+                    name="name"
+                    onBlur={handleOnBlur}
+                  />
+                  <TextField
+                    sx={{ width: '60%', mb: 7 }}
+                    id="standard-basic"
                     label="Your email"
                     variant="standard"
                     name="email"
                     type="email"
-                    onChange={handleOnChange}
+                    onBlur={handleOnBlur}
                   />
                   <TextField
                     sx={{ width: '60%', mb: 7 }}
@@ -70,7 +81,7 @@ const Register = () => {
                     variant="standard"
                     name="password"
                     type="password"
-                    onChange={handleOnChange}
+                    onBlur={handleOnBlur}
                   />
                   <TextField
                     sx={{ width: '60%', mb: 10 }}
@@ -79,7 +90,7 @@ const Register = () => {
                     variant="standard"
                     name="password2"
                     type="password"
-                    onChange={handleOnChange}
+                    onBlur={handleOnBlur}
                   />
 
                   <Button
@@ -96,7 +107,9 @@ const Register = () => {
                   </Button>
                 </form>
                 <NavLink to="/login">
-                  <Button variant="text">Already Registered? Login</Button>
+                  <Button sx={{ my: 3 }} variant="text">
+                    Already Registered? Login
+                  </Button>
                 </NavLink>
               </>
             )}
