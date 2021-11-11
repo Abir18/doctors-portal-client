@@ -52,6 +52,7 @@ const BookingModal = ({
     const appointment = {
       ...bookingInfo,
       bookingName: name,
+      time,
       date: date.toLocaleDateString(),
     };
 

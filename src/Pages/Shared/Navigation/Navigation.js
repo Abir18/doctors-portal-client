@@ -37,6 +37,11 @@ const Navigation = () => {
           </Link>
           {user?.email ? (
             <>
+              <Box>
+                <NavLink to="/dashboard">
+                  <Button color="inherit">Dashboard</Button>
+                </NavLink>
+              </Box>
               <span style={{ margin: '0 10px' }}>
                 Name: {user.displayName}{' '}
               </span>
