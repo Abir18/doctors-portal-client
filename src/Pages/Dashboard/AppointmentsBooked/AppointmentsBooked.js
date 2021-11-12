@@ -74,7 +74,11 @@ const AppointmentsBooked = ({ date }) => {
                 <TableCell component="th" scope="row">
                   {row.name}
                 </TableCell>
-                <TableCell align="left">{row.time}</TableCell>
+                <TableCell align="left">
+                  {new Date(row.date).toDateString()}
+                  <br />
+                  <span>{row.time}</span>
+                </TableCell>
                 <TableCell align="left">{row.bookingName}</TableCell>
                 <TableCell align="left">{row.email}</TableCell>
                 <TableCell align="left">

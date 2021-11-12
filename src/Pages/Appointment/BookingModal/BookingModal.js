@@ -152,7 +152,7 @@ const BookingModal = ({
                   name="phone"
                   // defaultValue="Phone Number"
                   onBlur={handleOnBlur}
-                  required
+                  // required
                   // type="number"
                   id="fullWidth"
                   sx={{ mb: 3 }}

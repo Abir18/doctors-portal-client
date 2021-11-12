@@ -10,6 +10,7 @@ import {
   updateProfile,
   signOut,
 } from 'firebase/auth';
+import axios from 'axios';
 
 initializeFirebase();
 
@@ -17,6 +18,7 @@ const useFirebase = () => {
   const [user, setUser] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [authError, setAuthError] = useState('');
+  const [admin, setAdmin] = useState(false);
 
   const auth = getAuth();
 
@@ -45,6 +47,9 @@ const useFirebase = () => {
             // ...
           });
 
+        // Store User Into Mongo Database Collection
+        saveUserToDatabase(email, name, 'POST');
+
         history.replace('/');
       })
       .catch(error => {
@@ -58,6 +63,7 @@ const useFirebase = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then(userCredential => {
         setAuthError('');
+
         const destination = location?.state?.from || '/';
         history.replace(destination);
       })
@@ -74,7 +80,14 @@ const useFirebase = () => {
     signInWithPopup(auth, googleProvider)
       .then(result => {
         const user = result.user;
+        // console.log(user, 'google user');
+        const { email, displayName } = user;
+
         setAuthError('');
+
+        // Store Google User Into Mongo Database Collection
+        saveUserToDatabase(email, displayName, 'PUT');
+
         const destination = location?.state?.from || '/';
         history.replace(destination);
       })
@@ -95,7 +108,16 @@ const useFirebase = () => {
       setIsLoading(false);
     });
     return () => unsubscribe;
-  }, []);
+  }, [auth]);
+
+  useEffect(() => {
+    fetch(`http://localhost:5000/users/${user.email}`)
+      .then(res => res.json())
+      .then(data => {
+        setAdmin(data.admin);
+        // console.log(data, 'from server');
+      });
+  }, [user.email]);
 
   const logOutUser = () => {
     setIsLoading(true);
@@ -109,9 +131,33 @@ const useFirebase = () => {
       .finally(() => setIsLoading(false));
   };
 
+  const saveUserToDatabase = (email, displayName, method) => {
+    const user = { email, displayName };
+
+    // With Axios
+    // axios.post('http://localhost:5000/users', user).then(res => {
+    //   console.log(res);
+    //   if (res.data.insertedId) {
+    //     console.log('You Are Created Specially');
+    //   }
+    // });
+
+    // With Fetch
+    fetch('http://localhost:5000/users', {
+      method: method,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(user),
+    })
+      .then(response => response.json())
+      .then(data => console.log(data));
+  };
+
   return {
     isLoading,
     user,
+    admin,
     registerUser,
     signInUser,
     signInWithGoogle,
